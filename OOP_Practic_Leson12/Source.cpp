@@ -1,10 +1,5 @@
 //Дана строка символов, содержащая(){}[] и другие символы.
 //Проверить есть ли в строке баланс открывающих и закрывающих скобок.
-// если мы находим открывающую скобку мы записываем элемент в стек
-// 
-// балланс соблюден, если последний элемент стека будет закрывающей скобкой, и количество элементов будет четное???
-// нужно уточнение, может останавливать запись в стек, когда увидим нужную нам закрывающую скобку???
-//
 
 #include <iostream>
 #include <cstring>
@@ -34,7 +29,7 @@ void Balance(string str);
 
 int main()
 {
-	string str{ "(asdf){asdfs}[dssfe]" };
+	string str{ "(asdf)(asdfs)[dssfe]" };
 	Balance(str);
 
 	return 0;
@@ -101,8 +96,9 @@ void stack::Print()
 
 void Balance(string str)
 {
-	bool Bal = false;
+	bool Bal;
 	stack st;
+	char temp;
 	char c1 = '(';
 	char c2 = ')';
 
@@ -113,47 +109,29 @@ void Balance(string str)
 	char c6 = ']';
 	for (int i = 0; i < str.length(); i++)
 	{
-		if (str.at(i) == c1) 
+		if (str.at(i) == c1 || str.at(i) == c3 || str.at(i) == c5)
 		{
-			st.Add(c1);
+			st.Add(str.at(i));
 		}
-		else if (str.at(i) == c3)
+		else if (str.at(i) == c2 || str.at(i) == c4 || str.at(i) == c6)
 		{
-			st.Add(c3);
-		}
-		else if (str.at(i) == c5)
-		{
-			st.Add(c5);
-		}
-	}
-	//записали в стек все открывающие скобки
-	//дальше нужно извлекать поочереди одну скобку когда будем встечать закрывающую скобку
-	//извлекая скобку мы должны сравнивать со строчкой и искать закрывающую скобку
-	//стек({[[{( ответ)}]]}) - если все правильно - тру
-	// а если {[()[])]} - {[([
-	//если мы нашли ), то извлекаемая должна быть ( - тогда меняем на тру, если нет совпадения меняем на фолс
-
-	for (int i = 0; i < str.length(); i++)
-	{
-		if (str.at(i) == c2)
-		{
-			if (st.Extract() == c1)
-				Bal = true;
-			else Bal = false;
-		}
-		else if (str.at(i) == c4)
-		{
-			if (st.Extract() == c3)
-				Bal = true;
-			else Bal = false;
-		}
-		else if (str.at(i) == c6)
-		{
-			if (st.Extract() == c5)
-				Bal = true;
-			else Bal = false;
+			if (st.IsEmpty()) Bal = false;
+			else
+			{
+				temp = st.Extract();
+				if (
+					temp == c1 && str.at(i) == c2 ||
+					temp == c3 && str.at(i) == c4 ||
+					temp == c5 && str.at(i) == c6
+					)Bal = true;
+				else
+				{
+					Bal = false;
+					break;
+				}
+			}
 		}
 	}
-	if (Bal) cout << "Good" << endl;
+	if (Bal && st.IsEmpty()) cout << "Good" << endl;//проверка на пустоту стека. Если он не пуст, то в строке были не закрытые скобки
 	else cout << "Bad" << endl;
 }
